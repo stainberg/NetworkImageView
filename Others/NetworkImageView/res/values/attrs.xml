@@ -6,5 +6,6 @@
 	    <attr name="round" format="boolean" />
 	    <attr name="borderWidth" format="dimension" />
 	    <attr name="borderColor" format="color" />
+	    <attr name="imageBorder" format="reference" />
 	</declare-styleable>
 </resources>
