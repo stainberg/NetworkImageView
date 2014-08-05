@@ -20,7 +20,7 @@ public class SimpleFactory {
 		return instance;
 	}
 	
-	public <T> T getInstance(Class<T> cls, String url, OnImageLoaderListener l, boolean cacheable) {
+	public <T> T getInstance(Class<T> cls, String url, OnImageLoaderListener l, String stag, String tag, boolean cacheable) {
 		T result = null;
 		try {
 			result = cls.newInstance();
@@ -28,6 +28,8 @@ public class SimpleFactory {
 				((AbsImageLoaderRunnable) result).setUrl(url);
 				((AbsImageLoaderRunnable) result).setListener(l);
 				((AbsImageLoaderRunnable) result).setCacheable(cacheable);
+				((AbsImageLoaderRunnable) result).setCategoryTag(tag);
+				((AbsImageLoaderRunnable) result).setSingleTag(stag);
 			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

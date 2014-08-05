@@ -3,5 +3,8 @@
 	<declare-styleable name="NetworkImageView">
 	    <attr name="imageError" format="reference" />
 	    <attr name="imageDefault" format="reference" />
+	    <attr name="round" format="boolean" />
+	    <attr name="borderWidth" format="dimension" />
+	    <attr name="borderColor" format="color" />
 	</declare-styleable>
 </resources>

@@ -15,6 +15,41 @@
         android:layout_height="wrap_content"
         stainberg:imageError="@drawable/ic_error"
         stainberg:imageDefault="@drawable/ic_default"
-        android:text="@string/hello_world" />
+        stainberg:round="false"
+        stainberg:borderWidth="1dp"
+        stainberg:borderColor="@color/background_red" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/networkimageview"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="33dp"
+        android:text="start" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_toRightOf="@+id/button1"
+        android:text="Stop&lt;Test>" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/button1"
+        android:layout_below="@+id/button2" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_toRightOf="@+id/button2"
+        android:text="StopAll" />
 
 </RelativeLayout>

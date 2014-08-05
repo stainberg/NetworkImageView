@@ -22,6 +22,24 @@ public abstract class AbsImageLoaderRunnable implements Runnable {
 	private OnImageLoaderListener mListener = null;
 	private String mMessage = "";
 	private boolean mCacheable = false;
+	private String mTag = "";
+	private String mSingleTag = "";
+	
+	public void setSingleTag(String stag) {
+		mSingleTag = stag;
+	}
+	
+	public String getSingleTag() {
+		return mSingleTag;
+	}
+	
+	public String getCategoryTag() {
+		return mTag;
+	}
+	
+	public void setCategoryTag(String tag) {
+		mTag = tag;
+	}
 	
 	public void setUrl(String url) {
 		mUrl = url;
@@ -77,11 +95,9 @@ public abstract class AbsImageLoaderRunnable implements Runnable {
 				if(mBitmap == null) {
 					return false;
 				}
-//				BaseHttpClient.getHttpObject().getHttpClient().getConnectionManager().shutdown();
 				return true;
 			}
 			httpGet.abort();
-//			BaseHttpClient.getHttpObject().getHttpClient().getConnectionManager().shutdown();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
