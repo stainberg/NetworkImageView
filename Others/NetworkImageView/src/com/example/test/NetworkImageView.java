@@ -43,7 +43,7 @@ public class NetworkImageView extends ImageView {
 	private String mSingleTag = "";
 	private static Object token = new Object();
 
-	private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
+	private ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
     private static final Config BITMAP_CONFIG = Config.ARGB_8888;
     private static final int COLORDRAWABLE_DIMENSION = 1;
     private static final int DEFAULT_BORDER_WIDTH = 0;
@@ -117,8 +117,10 @@ public class NetworkImageView extends ImageView {
 	
 	
 	public void setImageUrl(String url) {
-		mUrl = url;
-		loadImage();
+		if(url != null && !url.equals("")) {
+			mUrl = url;
+			loadImage();
+		}
 	}
 
 	public void setCacheable(boolean cacheable) {
@@ -157,9 +159,8 @@ public class NetworkImageView extends ImageView {
 
     @Override
     public void setScaleType(ScaleType scaleType) {
-        if (scaleType != SCALE_TYPE) {
-            throw new IllegalArgumentException(String.format("ScaleType %s not supported.", scaleType));
-        }
+    	SCALE_TYPE = scaleType;
+    	super.setScaleType(scaleType);
     }
 
     @Override
@@ -269,38 +270,38 @@ public class NetworkImageView extends ImageView {
     			setImageDrawable(mDefaultImageId);
             return;
         }
-        if(!mRound) {
-        	mBorderPaint.setStyle(Paint.Style.STROKE);
-            mBorderPaint.setAntiAlias(true);
-            mBorderPaint.setColor(mBorderColor);
-            mBorderPaint.setStrokeWidth(mBorderWidth);
-            mBorderRect.set(0, 0, getWidth(), getHeight());
-        	return;
-        }
-    	mBitmapShader = new BitmapShader(mBitmap, TileMode.CLAMP, TileMode.CLAMP);
-        mBitmapPaint.setAntiAlias(true);
-        mBitmapPaint.setShader(mBitmapShader);
-        if(mBorderImageId != null) {
-        	mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImageId).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
-        	mBorderDrawblePaint.setAntiAlias(true);
-            mBorderDrawblePaint.setShader(mBorderShader);
-        }
         mBorderPaint.setStyle(Paint.Style.STROKE);
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setColor(mBorderColor);
         mBorderPaint.setStrokeWidth(mBorderWidth);
+        mBitmapShader = new BitmapShader(mBitmap, TileMode.CLAMP, TileMode.CLAMP);
+        mBitmapPaint.setAntiAlias(true);
+        mBitmapPaint.setShader(mBitmapShader);
         mBitmapHeight = mBitmap.getHeight();
         mBitmapWidth = mBitmap.getWidth();
-        if(mBorderImageId != null) {
-        	mBorderBitmapWidth = ((BitmapDrawable)mBorderImageId).getBitmap().getWidth();
-        	mBorderBitmapHeight = ((BitmapDrawable)mBorderImageId).getBitmap().getHeight();
+        if(!mRound) {
+            mBorderRect.set(0, 0, getWidth(), getHeight());
+        } else {
+	    	mBitmapShader = new BitmapShader(mBitmap, TileMode.CLAMP, TileMode.CLAMP);
+	        mBitmapPaint.setAntiAlias(true);
+	        mBitmapPaint.setShader(mBitmapShader);
+	        if(mBorderImageId != null) {
+	        	mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImageId).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
+	        	mBorderDrawblePaint.setAntiAlias(true);
+	            mBorderDrawblePaint.setShader(mBorderShader);
+	        }
+	        
+	        if(mBorderImageId != null) {
+	        	mBorderBitmapWidth = ((BitmapDrawable)mBorderImageId).getBitmap().getWidth();
+	        	mBorderBitmapHeight = ((BitmapDrawable)mBorderImageId).getBitmap().getHeight();
+	        }
+	        mBorderDrawbleRect.set(0, 0, getWidth(), getHeight());
+	        mBorderRect.set(BROAD_SLIDER, BROAD_SLIDER, mBorderDrawbleRect.width() - BROAD_SLIDER, mBorderDrawbleRect.height() - BROAD_SLIDER);
+	        mDrawableRect.set((mBorderWidth + BROAD_SLIDER), (mBorderWidth + BROAD_SLIDER), mBorderRect.width() - (mBorderWidth + BROAD_SLIDER), mBorderRect.height() - (mBorderWidth + BROAD_SLIDER));
+	        mBorderDrawableRadius = Math.min((mBorderDrawbleRect.height()) / 2, (mBorderDrawbleRect.width()) / 2);
+	        mBorderRadius = Math.min(mBorderRect.height() / 2, mBorderRect.width() / 2);
+	        mDrawableRadius = Math.min(mDrawableRect.height() / 2, mDrawableRect.width() / 2);
         }
-        mBorderDrawbleRect.set(0, 0, getWidth(), getHeight());
-        mBorderRect.set(BROAD_SLIDER, BROAD_SLIDER, mBorderDrawbleRect.width() - BROAD_SLIDER, mBorderDrawbleRect.height() - BROAD_SLIDER);
-        mDrawableRect.set((mBorderWidth + BROAD_SLIDER), (mBorderWidth + BROAD_SLIDER), mBorderRect.width() - (mBorderWidth + BROAD_SLIDER), mBorderRect.height() - (mBorderWidth + BROAD_SLIDER));
-        mBorderDrawableRadius = Math.min((mBorderDrawbleRect.height()) / 2, (mBorderDrawbleRect.width()) / 2);
-        mBorderRadius = Math.min(mBorderRect.height() / 2, mBorderRect.width() / 2);
-        mDrawableRadius = Math.min(mDrawableRect.height() / 2, mDrawableRect.width() / 2);
         updateShaderMatrix();
         if(mBorderImageId != null) {
         	updateBorderShaderMatrix();
