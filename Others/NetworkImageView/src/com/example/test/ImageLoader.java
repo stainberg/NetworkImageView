@@ -27,7 +27,7 @@ public class ImageLoader {
 	}
 	
 	public void excute(String url, OnImageLoaderListener l, String stag, String tag, boolean cacheable) {
-		ImageRunnable r = SimpleFactory.getFactory().getInstance(ImageRunnable.class, url, l, stag, tag, cacheable);
+		ImageRunnable r = SimpleImageFactory.getFactory().getInstance(ImageRunnable.class, url, l, stag, tag, cacheable);
 		mPool.execute(r);
 	}
 	

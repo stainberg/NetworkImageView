@@ -1,19 +1,19 @@
 package com.example.test;
 
-public class SimpleFactory {
+public class SimpleImageFactory {
 	
-	private static SimpleFactory instance = null;
+	private static SimpleImageFactory instance = null;
 	private final static Object mMutex = new Object();
 	
-	private SimpleFactory() {
+	private SimpleImageFactory() {
 		
 	}
 	
-	public static SimpleFactory getFactory() {
+	public static SimpleImageFactory getFactory() {
 		if(instance == null) {
 			synchronized (mMutex) {
 				if(instance == null) {
-					instance = new SimpleFactory();
+					instance = new SimpleImageFactory();
 				}
 			}
 		}
