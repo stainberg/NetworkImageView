@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<declare-styleable name="NetworkImageView">
-	    <attr name="imageError" format="reference" />
-	    <attr name="imageDefault" format="reference" />
-	    <attr name="round" format="boolean" />
-	    <attr name="borderWidth" format="dimension" />
-	    <attr name="borderColor" format="color" />
-	    <attr name="imageBorder" format="reference" />
+	    <attr name="image_error" format="reference" />
+	    <attr name="image_default" format="reference" />
+	    <attr name="image_round" format="boolean" />
+	    <attr name="image_border_width" format="dimension" />
+	    <attr name="image_border_color" format="color" />
+	    <attr name="image_border" format="reference" />
 	</declare-styleable>
 </resources>

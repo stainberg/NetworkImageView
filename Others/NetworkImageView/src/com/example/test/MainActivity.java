@@ -77,7 +77,7 @@ public class MainActivity extends AbsBaseActvity {
 		}
 		
 		@Override
-		public void onLoaderComplition(Bitmap bitmap) {
+		public void onLoaderComplition(Bitmap bitmap, String tag) {
 			count++;
 			mCount.setText(String.valueOf(count));
 		}

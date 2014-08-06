@@ -73,14 +73,16 @@ public class NetworkImageView extends ImageView {
 	public NetworkImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.NetworkImageView);
-		mErrorImageId = a.getDrawable(R.styleable.NetworkImageView_imageError);
-		mDefaultImageId = a.getDrawable(R.styleable.NetworkImageView_imageDefault);
-		mBorderImageId = a.getDrawable(R.styleable.NetworkImageView_imageBorder);
-		mRound = a.getBoolean(R.styleable.NetworkImageView_round, false);
-		mBorderWidth = a.getDimensionPixelSize(R.styleable.NetworkImageView_borderWidth, DEFAULT_BORDER_WIDTH);
-        mBorderColor = a.getColor(R.styleable.NetworkImageView_borderColor, DEFAULT_BORDER_COLOR);
+		mErrorImageId = a.getDrawable(R.styleable.NetworkImageView_image_error);
+		mDefaultImageId = a.getDrawable(R.styleable.NetworkImageView_image_default);
+		mBorderImageId = a.getDrawable(R.styleable.NetworkImageView_image_border);
+		mRound = a.getBoolean(R.styleable.NetworkImageView_image_round, false);
+		mBorderWidth = a.getDimensionPixelSize(R.styleable.NetworkImageView_image_border_width, DEFAULT_BORDER_WIDTH);
+        mBorderColor = a.getColor(R.styleable.NetworkImageView_image_border_color, DEFAULT_BORDER_COLOR);
 		mSingleTag = MD5.ToMD5(String.valueOf(System.currentTimeMillis()) + String.valueOf(Math.random()));
 		a.recycle();
+		if(mDefaultImageId != null)
+			setImageDrawable(mDefaultImageId);
 		mReady = true;
 		if (mSetupPending) {
             setup();
@@ -95,6 +97,24 @@ public class NetworkImageView extends ImageView {
 	public NetworkImageView(Context context) {
 		this(context, null);
 	}
+	
+	public void setImageDefault(Drawable d) {
+		mDefaultImageId = d;
+	}
+	
+	public void setImageError(Drawable d) {
+		mErrorImageId = d;
+	}
+	
+	public void setImageRound(Drawable d) {
+		mBorderImageId = d;
+	}
+	
+	public void setIsRound(boolean round) {
+		mRound = round;
+	}
+	
+	
 	
 	public void setImageUrl(String url) {
 		mUrl = url;
@@ -116,30 +136,18 @@ public class NetworkImageView extends ImageView {
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
-		if(mDefaultImageId != null)
-			setImageDrawable(mDefaultImageId);
 		mStatus = ST_IDLE;
 	}
 	
 	
 	@Override
 	protected void onDetachedFromWindow() {
+		mReady = false;
 		super.onDetachedFromWindow();
-		mDefaultImageId = null;
-		mErrorImageId = null;
-		mBorderImageId = null;
 		ImageLoader.getInstance().canncelByTag(mSingleTag);
-		mBitmap.recycle();
-		mBitmap = null;
-		mHandler.removeCallbacksAndMessages(null);
-		token = null;
-		mDrawableRect = mBorderRect = mBorderDrawbleRect = null;
-		mShaderMatrix = mBorderShaderMatrix = null;
-		mBitmapPaint = mBorderPaint = mBorderDrawblePaint = null;
-		mListener = null;
-		mHandler = null;
-		mBitmapShader = null;
-		mBorderShader = null;
+		if(mHandler != null) {
+			mHandler.removeCallbacksAndMessages(null);
+		}
 	}
 
 	@Override
@@ -257,6 +265,8 @@ public class NetworkImageView extends ImageView {
             return;
         }
         if (mBitmap == null) {
+        	if(mDefaultImageId != null)
+    			setImageDrawable(mDefaultImageId);
             return;
         }
         if(!mRound) {
@@ -270,17 +280,21 @@ public class NetworkImageView extends ImageView {
     	mBitmapShader = new BitmapShader(mBitmap, TileMode.CLAMP, TileMode.CLAMP);
         mBitmapPaint.setAntiAlias(true);
         mBitmapPaint.setShader(mBitmapShader);
-        mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImageId).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
-        mBorderDrawblePaint.setAntiAlias(true);
-        mBorderDrawblePaint.setShader(mBorderShader);
+        if(mBorderImageId != null) {
+        	mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImageId).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
+        	mBorderDrawblePaint.setAntiAlias(true);
+            mBorderDrawblePaint.setShader(mBorderShader);
+        }
         mBorderPaint.setStyle(Paint.Style.STROKE);
         mBorderPaint.setAntiAlias(true);
         mBorderPaint.setColor(mBorderColor);
         mBorderPaint.setStrokeWidth(mBorderWidth);
         mBitmapHeight = mBitmap.getHeight();
         mBitmapWidth = mBitmap.getWidth();
-        mBorderBitmapWidth = ((BitmapDrawable)mBorderImageId).getBitmap().getWidth();
-        mBorderBitmapHeight = ((BitmapDrawable)mBorderImageId).getBitmap().getHeight();
+        if(mBorderImageId != null) {
+        	mBorderBitmapWidth = ((BitmapDrawable)mBorderImageId).getBitmap().getWidth();
+        	mBorderBitmapHeight = ((BitmapDrawable)mBorderImageId).getBitmap().getHeight();
+        }
         mBorderDrawbleRect.set(0, 0, getWidth(), getHeight());
         mBorderRect.set(BROAD_SLIDER, BROAD_SLIDER, mBorderDrawbleRect.width() - BROAD_SLIDER, mBorderDrawbleRect.height() - BROAD_SLIDER);
         mDrawableRect.set((mBorderWidth + BROAD_SLIDER), (mBorderWidth + BROAD_SLIDER), mBorderRect.width() - (mBorderWidth + BROAD_SLIDER), mBorderRect.height() - (mBorderWidth + BROAD_SLIDER));
@@ -288,7 +302,9 @@ public class NetworkImageView extends ImageView {
         mBorderRadius = Math.min(mBorderRect.height() / 2, mBorderRect.width() / 2);
         mDrawableRadius = Math.min(mDrawableRect.height() / 2, mDrawableRect.width() / 2);
         updateShaderMatrix();
-        updateBorderShaderMatrix();
+        if(mBorderImageId != null) {
+        	updateBorderShaderMatrix();
+        }
     }
     
     private void updateBorderShaderMatrix() {
@@ -326,34 +342,43 @@ public class NetworkImageView extends ImageView {
     }
     
 	private synchronized void loadImage() {
-			ImageLoader.getInstance().excute(mUrl, l, mSingleTag, mTag, mCacheable);
+		ImageLoader.getInstance().excute(mUrl, l, mSingleTag, mTag, mCacheable);
 	}
 	
 	private OnImageLoaderListener l = new OnImageLoaderListener() {
 		
 		@Override
 		public void onLoaderError(String mseeage) {
-			Message msg = new Message();
-			msg.what = MSG_ERROR_INVALIDATE;
-			msg.obj = token;
-			mHandler.sendMessage(msg);
+			if(mReady) {
+				Message msg = new Message();
+				msg.what = MSG_ERROR_INVALIDATE;
+				msg.obj = token;
+				mHandler.sendMessage(msg);
+			}
 		}
 		
 		@Override
-		public void onLoaderComplition(Bitmap bitmap) {
-			mBitmap = bitmap;
-			Message msg = new Message();
-			msg.what = MSG_SUCCUSS_INVALIDATE;
-			msg.obj = token;
-			mHandler.sendMessage(msg);
+		public void onLoaderComplition(Bitmap bitmap, String tag) {
+			if(!mUrl.equals(tag)) {
+				return;
+			}
+			if(mReady) {
+				mBitmap = bitmap;
+				Message msg = new Message();
+				msg.what = MSG_SUCCUSS_INVALIDATE;
+				msg.obj = token;
+				mHandler.sendMessage(msg);
+			}
 		}
 
 		@Override
 		public void onLoaderCanncel() {
-			Message msg = new Message();
-			msg.what = MSG_CANCEL_INVALIDATE;
-			msg.obj = token;
-			mHandler.sendMessage(msg);
+			if(mReady) {
+				Message msg = new Message();
+				msg.what = MSG_CANCEL_INVALIDATE;
+				msg.obj = token;
+				mHandler.sendMessage(msg);
+			}
 		}
 	};
 	
@@ -367,9 +392,10 @@ public class NetworkImageView extends ImageView {
 			case MSG_SUCCUSS_INVALIDATE:
 				if(mBitmap != null) {
 					NetworkImageView.this.setImageBitmap(mBitmap);
+					NetworkImageView.this.invalidate();
 				}
 				if(mListener != null) {
-					mListener.onLoaderComplition(null);
+					mListener.onLoaderComplition(null, mUrl);
 				}
 				break;
 			case MSG_ERROR_INVALIDATE:

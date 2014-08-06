@@ -58,18 +58,18 @@ public abstract class AbsImageLoaderRunnable implements Runnable {
 		if(mCacheable) {
 			mBitmap = ImageCache.getInstance().getBitmap(MD5.ToMD5(mUrl));
 			if(mBitmap != null) {//in memory or disk cache hit
-				mListener.onLoaderComplition(mBitmap);
+				mListener.onLoaderComplition(mBitmap, mUrl);
 			} else {
 				if(httpLoadImage()) {//load from network
 					ImageCache.getInstance().setBitmap(MD5.ToMD5(mUrl), mBitmap);
-					mListener.onLoaderComplition(mBitmap);
+					mListener.onLoaderComplition(mBitmap, mUrl);
 				} else {
 					mListener.onLoaderError(mMessage);
 				}
 			}
 		} else {
 			if(httpLoadImage()) {//load from network
-				mListener.onLoaderComplition(mBitmap);
+				mListener.onLoaderComplition(mBitmap, mUrl);
 			} else {
 				mListener.onLoaderError(mMessage);
 			}

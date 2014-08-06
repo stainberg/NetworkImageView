@@ -13,11 +13,11 @@
         android:id="@+id/networkimageview"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        stainberg:imageError="@drawable/ic_error"
-        stainberg:imageDefault="@drawable/ic_default"
-        stainberg:imageBorder="@drawable/ic_round_border"
-        stainberg:round="true"
-        stainberg:borderColor="@color/background_red" />
+        stainberg:image_error="@drawable/ic_error"
+        stainberg:image_default="@drawable/ic_default"
+        stainberg:image_border="@drawable/ic_round_border"
+        stainberg:image_round="true"
+        stainberg:image_border_color="@color/background_red" />
 
     <Button
         android:id="@+id/button1"
