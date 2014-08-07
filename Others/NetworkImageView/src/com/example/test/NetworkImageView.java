@@ -22,9 +22,9 @@ import android.widget.ImageView;
 
 public class NetworkImageView extends ImageView {
 	private String mUrl = null;
-	private Drawable mDefaultImageId = null;
-	private Drawable mErrorImageId = null;
-	private Drawable mBorderImageId = null;
+	private Drawable mDefaultImage = null;
+	private Drawable mErrorImage = null;
+	private Drawable mBorderImage = null;
 	private boolean mRound = false;
 	private Bitmap mBitmap = null;
 	private int BROAD_SLIDER = 0;
@@ -37,7 +37,7 @@ public class NetworkImageView extends ImageView {
 	private static final int ST_PROGRESS = 1;
 	@SuppressWarnings("unused")
 	private int mStatus = ST_NULL;
-	private boolean mCacheable = false;
+	private boolean mCacheable = true;//save image to disk
 	private OnImageLoaderListener mListener = null;
 	private String mTag = NetworkImageView.class.getSimpleName();
 	private String mSingleTag = "";
@@ -74,18 +74,18 @@ public class NetworkImageView extends ImageView {
 	public NetworkImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.NetworkImageView);
-		mErrorImageId = a.getDrawable(R.styleable.NetworkImageView_image_error);
-		mDefaultImageId = a.getDrawable(R.styleable.NetworkImageView_image_default);
-		mBorderImageId = a.getDrawable(R.styleable.NetworkImageView_image_border);
-		mRound = a.getBoolean(R.styleable.NetworkImageView_image_round, false);
-		mBorderWidth = a.getDimensionPixelSize(R.styleable.NetworkImageView_image_border_width, DEFAULT_BORDER_WIDTH);
-        mBorderColor = a.getColor(R.styleable.NetworkImageView_image_border_color, DEFAULT_BORDER_COLOR);
-        mSHowlastImage = a.getBoolean(R.styleable.NetworkImageView_image_show_last, false);
-        BROAD_SLIDER = a.getDimensionPixelSize(R.styleable.NetworkImageView_image_border_slider, 0);
-		mSingleTag = MD5.ToMD5(String.valueOf(System.currentTimeMillis()) + String.valueOf(Math.random()));
+		mErrorImage = a.getDrawable(R.styleable.NetworkImageView_image_error);//error image
+		mDefaultImage = a.getDrawable(R.styleable.NetworkImageView_image_default);//default image
+		mBorderImage = a.getDrawable(R.styleable.NetworkImageView_image_border);//border image
+		mRound = a.getBoolean(R.styleable.NetworkImageView_image_round, false);//is round imageview or not
+		mBorderWidth = a.getDimensionPixelSize(R.styleable.NetworkImageView_image_border_width, DEFAULT_BORDER_WIDTH);//border line width
+        mBorderColor = a.getColor(R.styleable.NetworkImageView_image_border_color, DEFAULT_BORDER_COLOR);//border line color
+        mSHowlastImage = a.getBoolean(R.styleable.NetworkImageView_image_show_last, false);//just show last url image
+        BROAD_SLIDER = a.getDimensionPixelSize(R.styleable.NetworkImageView_image_border_slider, 0);//gap between border and image
+		mSingleTag = MD5.ToMD5(String.valueOf(System.currentTimeMillis()) + String.valueOf(Math.random()));//cancel tag
 		a.recycle();
-		if(mDefaultImageId != null)
-			setImageDrawable(mDefaultImageId);
+		if(mDefaultImage != null)
+			setImageDrawable(mDefaultImage);
 		mReady = true;
 		if (mSetupPending) {
             setup();
@@ -102,15 +102,15 @@ public class NetworkImageView extends ImageView {
 	}
 	
 	public void setImageDefault(Drawable d) {
-		mDefaultImageId = d;
+		mDefaultImage = d;
 	}
 	
 	public void setImageError(Drawable d) {
-		mErrorImageId = d;
+		mErrorImage = d;
 	}
 	
 	public void setImageRound(Drawable d) {
-		mBorderImageId = d;
+		mBorderImage = d;
 	}
 	
 	public void setIsRound(boolean round) {
@@ -174,7 +174,7 @@ public class NetworkImageView extends ImageView {
 	        if (mBorderWidth != 0) {
 	            canvas.drawCircle(getWidth() / 2, getHeight() / 2, mBorderRadius, mBorderPaint);
 	        }
-	        if(mBorderImageId != null) {
+	        if(mBorderImage != null) {
         		canvas.drawCircle(getWidth() / 2, getHeight() / 2, mBorderDrawableRadius, mBorderDrawblePaint);
         	}
         } else {
@@ -267,8 +267,8 @@ public class NetworkImageView extends ImageView {
             return;
         }
         if (mBitmap == null) {
-        	if(mDefaultImageId != null)
-    			setImageDrawable(mDefaultImageId);
+        	if(mDefaultImage != null)
+    			setImageDrawable(mDefaultImage);
             return;
         }
         if(mBorderWidth != 0) {
@@ -279,12 +279,12 @@ public class NetworkImageView extends ImageView {
 	        mBorderRect.set(0, 0, getWidth(), getHeight());
 	        mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2, (mBorderRect.width() - mBorderWidth) / 2);
         }
-        if(mBorderImageId != null) {
-        	mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImageId).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
+        if(mBorderImage != null) {
+        	mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImage).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
         	mBorderDrawblePaint.setAntiAlias(true);
             mBorderDrawblePaint.setShader(mBorderShader);
-            mBorderBitmapWidth = ((BitmapDrawable)mBorderImageId).getBitmap().getWidth();
-        	mBorderBitmapHeight = ((BitmapDrawable)mBorderImageId).getBitmap().getHeight();
+            mBorderBitmapWidth = ((BitmapDrawable)mBorderImage).getBitmap().getWidth();
+        	mBorderBitmapHeight = ((BitmapDrawable)mBorderImage).getBitmap().getHeight();
         	mBorderDrawbleRect.set(0, 0, getWidth(), getHeight());
         	mBorderDrawableRadius = Math.min((mBorderDrawbleRect.height()) / 2, (mBorderDrawbleRect.width()) / 2);
         	updateBorderShaderMatrix();
@@ -391,11 +391,11 @@ public class NetworkImageView extends ImageView {
 				}
 				break;
 			case MSG_ERROR_INVALIDATE:
-				if(mErrorImageId != null) {
-					setImageDrawable(mErrorImageId);
+				if(mErrorImage != null) {
+					setImageDrawable(mErrorImage);
 				} else {
-					if(mDefaultImageId != null) {
-						setImageDrawable(mDefaultImageId);
+					if(mDefaultImage != null) {
+						setImageDrawable(mDefaultImage);
 					}
 				}
 				if(mListener != null) {
@@ -403,8 +403,8 @@ public class NetworkImageView extends ImageView {
 				}
 				break;
 			case MSG_CANCEL_INVALIDATE:
-				if(mDefaultImageId != null) {
-					setImageDrawable(mDefaultImageId);
+				if(mDefaultImage != null) {
+					setImageDrawable(mDefaultImage);
 				}
 				if(mListener != null) {
 					mListener.onLoaderCanncel();
