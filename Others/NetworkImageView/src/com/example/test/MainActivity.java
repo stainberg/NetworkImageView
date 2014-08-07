@@ -1,11 +1,8 @@
 package com.example.test;
 
-import java.util.List;
-
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Message;
-import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,18 +10,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.youku.laifeng.libcuteroom.MyLog;
-import com.youku.laifeng.libcuteroom.base.AbsBaseActvity;
-import com.youku.laifeng.libcuteroom.model.port.aidl.IChatManagerService;
-import com.youku.laifeng.libcuteroom.model.port.aidl.IChatManagerServiceListener;
-import com.youku.laifeng.libcuteroom.model.socketio.chatdata.UserListMessage;
-import com.youku.laifeng.libcuteroom.model.socketio.send.EnterRoom;
-import com.youku.laifeng.libcuteroom.utils.Utils;
-
-public class MainActivity extends AbsBaseActvity {
-	private static final int MSG_SOCKET_IO_RECV_USER_LIST_MSG = 0x10;
-	private static final String TAG = MainActivity.class.getName();
-	private IChatManagerService mChatSerivce = null;
+public class MainActivity extends Activity {
+	public static final String TAG = MainActivity.class.getName();
 	private NetworkImageView mTestImage = null;
 	private Button mStart = null, mStop = null, mStopAll = null;
 	private TextView mCount = null;
@@ -66,7 +53,6 @@ public class MainActivity extends AbsBaseActvity {
 		mStopAll = (Button) findViewById(R.id.button3);
 		mStopAll.setOnClickListener(l);
 		mCount = (TextView) findViewById(R.id.textView1);
-		mHandler.post(initChat);
 	}
 	
 	private OnImageLoaderListener ll = new OnImageLoaderListener() {
@@ -106,33 +92,8 @@ public class MainActivity extends AbsBaseActvity {
 		}
 	};
 	
-	private Runnable initChat = new Runnable() {
-		
-		@Override
-		public void run() {
-			try {
-				while(MyApplication.getInstance().getChatService() == null) {
-					Thread.sleep(500);
-				}
-				mChatSerivce = MyApplication.getInstance().getChatService();
-				mChatSerivce.registerChatManagerListener(mChatListener);
-				mChatSerivce.connect("http://rm2.xingmeng.com:9527");
-			} catch (RemoteException | InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	};
-	
 	protected void onDestroy() {
 		super.onDestroy();
-		try {
-			mChatSerivce.unregisterChatManagerListener(mChatListener);
-			mChatListener = null;
-			mChatSerivce = null;
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
 	};
 	
 	@Override
@@ -153,51 +114,5 @@ public class MainActivity extends AbsBaseActvity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	@Override
-	public void handleMessage(Message msg) {
-		switch(msg.what) {
-		case MSG_SOCKET_IO_RECV_USER_LIST_MSG:
-			UserListMessage.getInstance().refreshUserList((String) msg.obj);
-			break;
-		}
-	}
 	
-	private IChatManagerServiceListener mChatListener = new IChatManagerServiceListener.Stub() {
-
-		@Override
-		public void onClose() throws RemoteException {
-			MyLog.v(TAG, "onClose:");
-		}
-
-		@Override
-		public void onConnect() throws RemoteException {
-			MyLog.v(TAG, "onConnect:");
-			mChatSerivce.sendEvent(new EnterRoom("363280966", "955", "MzcyMzk4NzY0LTEtMTQwNjcwODM1MTc5Ny0xMDAw-9C6F7C8BD6979EB345080BC71417C58D", "dt_1_" + Utils.getIMEI()));
-		}
-
-		@Override
-		public void onError(String arg0) throws RemoteException {
-			MyLog.v(TAG, "onError:");
-		}
-		
-		@Override
-		public void onReceiveEvent(String event, List<String> args) throws RemoteException {
-			for(String item:args) {
-				MyLog.v(TAG, "onReceiveEvent:" + event + " & detail =  " + item);
-				if (event.equals(UserListMessage.EVENT_USER_LIST)) {
-                    Message msg = new Message();
-                    msg.what = MSG_SOCKET_IO_RECV_USER_LIST_MSG;
-                    msg.obj = item;
-                    mHandler.sendMessage(msg);
-                }
-			}
-		}
-
-		@Override
-		public void onReceiveMessage(String arg0) throws RemoteException {
-			
-		}
-		
-	};
 }
