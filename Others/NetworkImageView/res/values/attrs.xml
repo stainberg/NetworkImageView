@@ -7,5 +7,7 @@
 	    <attr name="image_border_width" format="dimension" />
 	    <attr name="image_border_color" format="color" />
 	    <attr name="image_border" format="reference" />
+	    <attr name="image_show_last" format="boolean" />
+	    <attr name="image_border_slider" format="dimension" />
 	</declare-styleable>
 </resources>

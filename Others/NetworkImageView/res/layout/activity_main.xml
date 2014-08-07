@@ -11,13 +11,15 @@
 
     <com.example.test.NetworkImageView
         android:id="@+id/networkimageview"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         stainberg:image_error="@drawable/ic_error"
         stainberg:image_default="@drawable/ic_default"
-        stainberg:image_border="@drawable/ic_round_border"
         stainberg:image_round="true"
-        stainberg:image_border_color="#FFFFFFFF" />
+        stainberg:image_show_last="false"
+        stainberg:image_border_width="1dp"
+        stainberg:image_border_slider="1dp"
+        stainberg:image_border_color="#FFFF00FF" />
 
     <Button
         android:id="@+id/button1"
