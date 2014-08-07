@@ -3,10 +3,6 @@
     package="com.example.test"
     android:versionCode="1"
     android:versionName="1.0" >
-	<permission
-        android:name="com.youku.laifeng.libcuteroom.stainberg"
-        android:label="获取数据服务权限"
-        android:protectionLevel="normal" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -20,7 +16,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="com.youku.laifeng.libcuteroom" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -46,18 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <service
-            android:name="com.youku.laifeng.libcuteroom.service.DataManagerService"
-            android:exported="false"
-            android:process=":TestdataService" >
-            <intent-filter>
-                <action android:name="com.youku.laifeng.libcuteroom.model.port.aidl.IDataManagerService" />
-                <action android:name="com.youku.laifeng.libcuteroom.model.port.aidl.IChatManagerService" />
-                <action android:name="com.youku.laifeng.libcuteroom.model.port.aidl.IDownloadManagerService" />
-                <action android:name="com.youku.laifeng.service.REMOTE_DATA_SERVICE" />
-            </intent-filter>
-        </service>
         
     </application>
 

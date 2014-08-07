@@ -117,8 +117,6 @@ public class NetworkImageView extends ImageView {
 		mRound = round;
 	}
 	
-	
-	
 	public void setImageUrl(String url) {
 		if(url != null && !url.equals("")) {
 			mUrl = url;
@@ -268,6 +266,11 @@ public class NetworkImageView extends ImageView {
             mSetupPending = true;
             return;
         }
+        if (mBitmap == null) {
+        	if(mDefaultImageId != null)
+    			setImageDrawable(mDefaultImageId);
+            return;
+        }
         if(mBorderWidth != 0) {
 	        mBorderPaint.setStyle(Paint.Style.STROKE);
 	        mBorderPaint.setAntiAlias(true);
@@ -276,7 +279,6 @@ public class NetworkImageView extends ImageView {
 	        mBorderRect.set(0, 0, getWidth(), getHeight());
 	        mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2, (mBorderRect.width() - mBorderWidth) / 2);
         }
-        
         if(mBorderImageId != null) {
         	mBorderShader = new BitmapShader(((BitmapDrawable)mBorderImageId).getBitmap(), TileMode.CLAMP, TileMode.CLAMP);
         	mBorderDrawblePaint.setAntiAlias(true);
@@ -287,23 +289,14 @@ public class NetworkImageView extends ImageView {
         	mBorderDrawableRadius = Math.min((mBorderDrawbleRect.height()) / 2, (mBorderDrawbleRect.width()) / 2);
         	updateBorderShaderMatrix();
         }
-        
-        if (mBitmap == null) {
-            return;
-        }
-        
         mBitmapShader = new BitmapShader(mBitmap, TileMode.CLAMP, TileMode.CLAMP);
         mBitmapPaint.setAntiAlias(true);
         mBitmapPaint.setShader(mBitmapShader);
         mBitmapHeight = mBitmap.getHeight();
         mBitmapWidth = mBitmap.getWidth();
         mDrawableRect.set((mBorderWidth + BROAD_SLIDER), (mBorderWidth + BROAD_SLIDER), getWidth() - (mBorderWidth + BROAD_SLIDER), getHeight() - (mBorderWidth + BROAD_SLIDER));
-        if(mRound) {
-	        mDrawableRadius = Math.min((mDrawableRect.height()) / 2, (mDrawableRect.width()) / 2);
-	        updateShaderMatrix();
-        } else {
-        	updateShaderMatrix();
-        }
+        mDrawableRadius = Math.min((mDrawableRect.height()) / 2, (mDrawableRect.width()) / 2);
+        updateShaderMatrix();
     }
     
     private void updateBorderShaderMatrix() {
