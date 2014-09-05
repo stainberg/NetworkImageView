@@ -135,11 +135,21 @@ public class NetworkImageView extends ImageView {
 	public void setCancelCategoryTag(String tag) {
 		mTag = tag;
 	}
-	
+
+	public void setBroadSlider(int broadslider){
+		BROAD_SLIDER = broadslider;
+		setup();
+	}
+
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		mStatus = ST_IDLE;
+		mReady = true;
+        Message msg = new Message();
+        msg.what = MSG_SUCCUSS_INVALIDATE;
+        msg.obj = token;
+        mHandler.sendMessage(msg);
 	}
 	
 	
@@ -164,6 +174,11 @@ public class NetworkImageView extends ImageView {
     	super.setScaleType(scaleType);
     }
 
+    public void setImageAlpha(int alpha) {
+    	mBitmapPaint.setAlpha(alpha);
+    	setup();
+    }
+    
     @Override
     protected void onDraw(Canvas canvas) {
         if (getDrawable() == null) {
@@ -354,8 +369,8 @@ public class NetworkImageView extends ImageView {
 			if(!mUrl.equals(tag) & mSHowlastImage) {
 				return;
 			}
+			mBitmap = bitmap;
 			if(mReady) {
-				mBitmap = bitmap;
 				Message msg = new Message();
 				msg.what = MSG_SUCCUSS_INVALIDATE;
 				msg.obj = token;
